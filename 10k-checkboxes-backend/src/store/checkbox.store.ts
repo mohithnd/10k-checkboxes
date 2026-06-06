@@ -1,9 +1,8 @@
 import { Checkbox } from "../types.ts/checkbox.types.js";
-
-const TOTAL_CHECKBOXES = 10000;
+import { COUNT } from "../utils/constants.js";
 
 export const checkboxes: Checkbox[] = Array.from(
-  { length: TOTAL_CHECKBOXES },
+  { length: COUNT },
   (_, index) => ({
     id: index + 1,
     checked: false,

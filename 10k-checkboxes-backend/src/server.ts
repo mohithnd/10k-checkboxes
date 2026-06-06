@@ -1,13 +1,12 @@
 import http from "http";
 import { app } from "./app.js";
 import { createSocketServer } from "./sockets/socket.js";
-
-const PORT = 3000;
+import { ENV } from "./config/env.js";
 
 const httpServer = http.createServer(app);
 
 createSocketServer(httpServer);
 
-httpServer.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
+httpServer.listen(ENV.PORT, () => {
+  console.log(`Server running on ${ENV.PORT}`);
 });

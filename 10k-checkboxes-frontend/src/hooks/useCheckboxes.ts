@@ -2,12 +2,18 @@ import { useEffect, useState } from "react";
 import { generateCheckboxes } from "../utils/generateCheckboxes";
 import { socket } from "../services/socket.service";
 import type { CheckboxUpdatePayload } from "../services/socket.types";
+import { ENV } from "../config/env";
+import {
+  CHECKBOX_STATE_RESTORE_PATH,
+  CHECKBOX_UPDATE_RECEIVED,
+  CHECKBOX_UPDATE_SENT,
+} from "../utils/constants";
 
 export const useCheckboxes = (count: number) => {
   const [checkboxes, setCheckboxes] = useState(() => generateCheckboxes(count));
 
   useEffect(() => {
-    fetch("http://localhost:3000/checkboxes")
+    fetch(`${ENV.API_URL}/${CHECKBOX_STATE_RESTORE_PATH}`)
       .then((res) => res.json())
       .then((data) => {
         setCheckboxes(data);
@@ -24,10 +30,10 @@ export const useCheckboxes = (count: number) => {
       });
     };
 
-    socket.on("server:browser::checkbox:update", handleUpdate);
+    socket.on(CHECKBOX_UPDATE_RECEIVED, handleUpdate);
 
     return () => {
-      socket.off("server:browser::checkbox:update", handleUpdate);
+      socket.off(CHECKBOX_UPDATE_RECEIVED, handleUpdate);
     };
   }, []);
 
@@ -38,7 +44,7 @@ export const useCheckboxes = (count: number) => {
       return;
     }
 
-    socket.emit("browser:server::checkbox:update", {
+    socket.emit(CHECKBOX_UPDATE_SENT, {
       id,
       checked: !checkbox.checked,
     });
