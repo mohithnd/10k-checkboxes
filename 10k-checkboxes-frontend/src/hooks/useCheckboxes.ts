@@ -44,6 +44,16 @@ export const useCheckboxes = (count: number) => {
       return;
     }
 
+    // Optimistic Update
+    setCheckboxes((prev) => {
+      const updated = [...prev];
+      updated[id - 1] = {
+        ...updated[id - 1],
+        checked: !updated[id - 1].checked,
+      };
+      return updated;
+    });
+
     socket.emit(CHECKBOX_UPDATE_SENT, {
       id,
       checked: !checkbox.checked,
