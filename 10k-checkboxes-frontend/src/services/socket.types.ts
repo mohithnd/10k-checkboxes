@@ -1,4 +1,4 @@
 export interface CheckboxUpdatePayload {
   id: number;
-  checked: false;
+  checked: boolean;
 }
