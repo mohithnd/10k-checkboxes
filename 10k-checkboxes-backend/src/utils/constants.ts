@@ -10,3 +10,6 @@ export const COUNT = 10000;
 
 export const SOCKET_CONNECT = "connection";
 export const SOCKET_DISCONNECT = "disconnect";
+
+export const REDIS_CHECKBOX_STATE_KEY = "checkboxes:state";
+export const REDIS_CHECKBOX_UPDATE_CHANNEL = "checkboxes:updates";

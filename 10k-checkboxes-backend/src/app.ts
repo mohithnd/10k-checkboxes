@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { checkboxes } from "./store/checkbox.store.js";
+import { getCheckboxes } from "./store/checkbox.store.js";
 
 export const app = express();
 
@@ -12,5 +12,5 @@ app.get("/health", (_, res) => {
 });
 
 app.get("/checkboxes", (_, res) => {
-  return res.json(checkboxes);
+  return res.json(getCheckboxes());
 });
