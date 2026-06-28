@@ -1,4 +1,5 @@
 export interface CheckboxProps {
+  id: number;
   checked: boolean;
-  onToggle: () => void;
+  onToggle: (id: number, checked: boolean) => void;
 }

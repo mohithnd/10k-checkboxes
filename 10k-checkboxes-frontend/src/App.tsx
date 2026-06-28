@@ -1,4 +1,5 @@
 import { CheckboxGrid } from "./components/CheckboxGrid";
+import { PageHeader } from "./components/PageHeader";
 import { useCheckboxes } from "./hooks/useCheckboxes";
 import { COUNT } from "./utils/constants";
 
@@ -7,9 +8,7 @@ function App() {
 
   return (
     <main>
-      <h1>Realtime Checkbox Playground</h1>
-
-      <p>Total Checkboxes: {checkboxes.length}</p>
+      <PageHeader total={checkboxes.length} />
 
       <CheckboxGrid checkboxes={checkboxes} onToggle={toggleCheckbox} />
     </main>

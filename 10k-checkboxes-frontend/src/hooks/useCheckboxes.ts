@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { generateCheckboxes } from "../utils/generateCheckboxes";
 import { socket } from "../services/socket.service";
 import type { CheckboxUpdatePayload } from "../services/socket.types";
@@ -8,6 +8,33 @@ import {
   CHECKBOX_UPDATE_RECEIVED,
   CHECKBOX_UPDATE_SENT,
 } from "../utils/constants";
+import type { CheckboxItem } from "../types/checkbox.types";
+
+const applyCheckboxUpdate = (
+  prev: CheckboxItem[],
+  payload: CheckboxUpdatePayload,
+) => {
+  const index = payload.id - 1;
+
+  const currentCheckbox = prev[index];
+
+  if (!currentCheckbox) {
+    return prev;
+  }
+
+  if (currentCheckbox.checked === payload.checked) {
+    return prev;
+  }
+
+  const updated = [...prev];
+
+  updated[index] = {
+    ...currentCheckbox,
+    checked: payload.checked,
+  };
+
+  return updated;
+};
 
 export const useCheckboxes = (count: number) => {
   const [checkboxes, setCheckboxes] = useState(() => generateCheckboxes(count));
@@ -19,15 +46,8 @@ export const useCheckboxes = (count: number) => {
         setCheckboxes(data);
       });
 
-    const handleUpdate = ({ id, checked }: CheckboxUpdatePayload) => {
-      setCheckboxes((prev) => {
-        const updated = [...prev];
-        updated[id - 1] = {
-          ...updated[id - 1],
-          checked,
-        };
-        return updated;
-      });
+    const handleUpdate = (payload: CheckboxUpdatePayload) => {
+      setCheckboxes((prev) => applyCheckboxUpdate(prev, payload));
     };
 
     socket.on(CHECKBOX_UPDATE_RECEIVED, handleUpdate);
@@ -37,28 +57,16 @@ export const useCheckboxes = (count: number) => {
     };
   }, []);
 
-  const toggleCheckbox = (id: number) => {
-    const checkbox = checkboxes[id - 1];
-
-    if (!checkbox) {
-      return;
-    }
-
-    // Optimistic Update
-    setCheckboxes((prev) => {
-      const updated = [...prev];
-      updated[id - 1] = {
-        ...updated[id - 1],
-        checked: !updated[id - 1].checked,
-      };
-      return updated;
-    });
-
-    socket.emit(CHECKBOX_UPDATE_SENT, {
+  const toggleCheckbox = useCallback((id: number, checked: boolean) => {
+    const payload: CheckboxUpdatePayload = {
       id,
-      checked: !checkbox.checked,
-    });
-  };
+      checked,
+    };
+
+    setCheckboxes((prev) => applyCheckboxUpdate(prev, payload));
+
+    socket.emit(CHECKBOX_UPDATE_SENT, payload);
+  }, []);
 
   return {
     checkboxes,
